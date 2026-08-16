@@ -1,5 +1,4 @@
-import { Moon, Sun } from 'lucide-react'
-
+import { Icon } from '@design-system/icons'
 import { useTheme } from '@design-system/themes/theme-provider'
 
 import { Button } from './Button'
@@ -25,17 +24,10 @@ export function ThemeToggle() {
       aria-label={isDark ? 'Switch to light theme' : 'Switch to dark theme'}
       aria-pressed={isDark}
     >
-      {isDark ? (
-        <Sun
-          className="h-5 w-5 motion-safe:transition-transform motion-safe:duration-200"
-          aria-hidden="true"
-        />
-      ) : (
-        <Moon
-          className="h-5 w-5 motion-safe:transition-transform motion-safe:duration-200"
-          aria-hidden="true"
-        />
-      )}
+      <Icon
+        name={isDark ? 'sun' : 'moon'}
+        className="motion-safe:transition-transform motion-safe:duration-200"
+      />
     </Button>
   )
 }
