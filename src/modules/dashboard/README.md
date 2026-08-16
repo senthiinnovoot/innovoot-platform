@@ -2,7 +2,10 @@
 
 The authenticated landing experience — summary widgets and cross-module shortcuts.
 
-**Status:** not yet built (foundation stage only — see repo root `CLAUDE.md`).
+**Status:** Phase 4A — `pages/DashboardPage.tsx`. Reads `useBusinessContext()` (from
+`modules/business-context`) and renders one mock metric card per enabled module, generically —
+not hardcoded per business type. Metrics are illustrative placeholders; no real analytics API
+exists yet.
 
 ## Planned internal structure
 

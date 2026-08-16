@@ -42,4 +42,12 @@ describe('Icon', () => {
     const { container } = render(<Icon name={name} />)
     expect(container.querySelector('svg')).toBeInTheDocument()
   })
+
+  it.each(['bed', 'calendar', 'flask-conical', 'layout-dashboard', 'pill', 'users'] as const)(
+    'renders the %s icon added for Phase 4A navigation',
+    (name) => {
+      const { container } = render(<Icon name={name} />)
+      expect(container.querySelector('svg')).toBeInTheDocument()
+    },
+  )
 })

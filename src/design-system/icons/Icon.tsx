@@ -1,15 +1,21 @@
 import { type VariantProps, cva } from 'class-variance-authority'
 import { type ClassValue, clsx } from 'clsx'
 import {
+  Bed,
+  Calendar,
   ChevronDown,
   CircleAlert,
   CircleCheck,
+  FlaskConical,
   Info,
+  LayoutDashboard,
   LoaderCircle,
   Moon,
+  Pill,
   Sun,
   TriangleAlert,
   User,
+  Users,
   X,
 } from 'lucide-react'
 import type { SVGProps } from 'react'
@@ -32,15 +38,21 @@ function cx(...inputs: ClassValue[]): string {
  * import `lucide-react` anywhere else.
  */
 const icons = {
+  bed: Bed,
+  calendar: Calendar,
   'chevron-down': ChevronDown,
   'circle-alert': CircleAlert,
   'circle-check': CircleCheck,
+  'flask-conical': FlaskConical,
   info: Info,
+  'layout-dashboard': LayoutDashboard,
   'loader-circle': LoaderCircle,
   moon: Moon,
+  pill: Pill,
   sun: Sun,
   'triangle-alert': TriangleAlert,
   user: User,
+  users: Users,
   x: X,
 } as const
 
