@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Innovoot</title>
+    <!--
+      Runs before React hydrates so the correct theme class is present on
+      first paint — without this, the page would flash light-then-dark (or
+      vice versa) on every load. Logic must stay in sync with
+      src/design-system/themes/theme.ts's getInitialTheme(); duplicated
+      here (not imported) because it has to run synchronously pre-hydration,
+      before any module graph is available.
+    -->
+    <script>
+      ;(function () {
+        try {
+          var stored = localStorage.getItem('innovoot-theme')
+          var theme =
+            stored === 'light' || stored === 'dark'
+              ? stored
+              : window.matchMedia('(prefers-color-scheme: dark)').matches
+                ? 'dark'
+                : 'light'
+          document.documentElement.classList.toggle('dark', theme === 'dark')
+          document.documentElement.style.colorScheme = theme
+        } catch {
+          /* localStorage may be unavailable (e.g. privacy mode) — fall back to light. */
+        }
+      })()
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

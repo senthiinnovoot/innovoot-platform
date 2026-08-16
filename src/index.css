@@ -1,0 +1,292 @@
+@import 'tailwindcss';
+
+/*
+ * Makes Tailwind's built-in `dark:` variant track OUR class-based theme
+ * toggle (`.dark` on <html>, set by design-system/themes/theme.ts) instead
+ * of its v4 default of `@media (prefers-color-scheme: dark)`. Without
+ * this, `dark:*` utilities silently ignore the in-app theme switcher and
+ * only respond to the OS setting — a real bug caught while validating this
+ * page (see docs/decisions/ADR-007-theming-architecture.md).
+ *
+ * In practice, prefer the semantic tokens (`bg-background`, `text-error`,
+ * etc.) over `dark:` utilities entirely — they resolve through CSS
+ * variables and never need this variant at all. This exists as a safety
+ * net for the rare case a raw Tailwind color is unavoidable.
+ */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Innovoot Design System — token source of truth.
+ *
+ * Single-source-of-truth rule: tokens are defined ONCE here as CSS custom
+ * properties and consumed everywhere (Tailwind utilities, arbitrary CSS,
+ * JS via getComputedStyle if ever needed) — do not redefine equivalent
+ * values in tailwind.config or component code. See
+ * docs/design-system/tokens.md for the full rationale and usage guide.
+ *
+ * Values are OKLCH. Contrast for every semantic (background, foreground)
+ * pair below was verified against WCAG AA (4.5:1 text, 3:1 UI/focus) using
+ * `culori` during design — see docs/design-system/tokens.md for the method
+ * (kept reproducible so token changes can be re-verified, not just trusted).
+ */
+
+/* ---------------------------------------------------------------------- */
+/* Light theme (default)                                                  */
+/* ---------------------------------------------------------------------- */
+:root {
+  color-scheme: light;
+
+  --background: oklch(98.5% 0.002 247);
+  --foreground: oklch(14.5% 0.004 247);
+
+  --surface: oklch(100% 0 0);
+  --surface-elevated: oklch(100% 0 0);
+
+  --muted: oklch(96% 0.004 247);
+  --muted-foreground: oklch(45% 0.01 247);
+
+  --border: oklch(87% 0.006 247);
+  --input: oklch(87% 0.006 247);
+  --ring: var(--primary);
+
+  --primary: oklch(55% 0.18 262);
+  --primary-foreground: oklch(98.5% 0 0);
+
+  --secondary: oklch(96% 0.004 247);
+  --secondary-foreground: oklch(20% 0.004 247);
+
+  --accent: oklch(50% 0.12 200);
+  --accent-foreground: oklch(98.5% 0 0);
+
+  --success: oklch(48% 0.14 145);
+  --success-foreground: oklch(98.5% 0 0);
+
+  --warning: oklch(78% 0.15 80);
+  --warning-foreground: oklch(20% 0.02 80);
+
+  --error: oklch(55% 0.22 25);
+  --error-foreground: oklch(98.5% 0 0);
+
+  --info: oklch(48% 0.15 240);
+  --info-foreground: oklch(98.5% 0 0);
+
+  /* Shadows are defined per-theme because dark surfaces need different
+     opacity/spread to read as elevation at all (a shadow tuned for a white
+     surface all but disappears on a near-black one). */
+  --shadow-elevation-xs: 0 1px 2px 0 oklch(0% 0 0 / 0.04);
+  --shadow-elevation-sm: 0 1px 3px 0 oklch(0% 0 0 / 0.08), 0 1px 2px -1px oklch(0% 0 0 / 0.08);
+  --shadow-elevation-md: 0 4px 6px -1px oklch(0% 0 0 / 0.08), 0 2px 4px -2px oklch(0% 0 0 / 0.08);
+  --shadow-elevation-lg: 0 10px 15px -3px oklch(0% 0 0 / 0.1), 0 4px 6px -4px oklch(0% 0 0 / 0.1);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Dark theme — toggled via a `.dark` class on <html>, set by             */
+/* design-system/themes (see ThemeProvider). Semantic var NAMES stay      */
+/* identical to :root; only their VALUES change, so components never      */
+/* branch on theme.                                                       */
+/* ---------------------------------------------------------------------- */
+.dark {
+  color-scheme: dark;
+
+  --background: oklch(14.5% 0.004 247);
+  --foreground: oklch(97% 0.002 247);
+
+  --surface: oklch(19% 0.004 247);
+  --surface-elevated: oklch(24% 0.004 247);
+
+  --muted: oklch(24% 0.006 247);
+  --muted-foreground: oklch(66% 0.01 247);
+
+  --border: oklch(30% 0.006 247);
+  --input: oklch(30% 0.006 247);
+  --ring: var(--primary);
+
+  --primary: oklch(68% 0.17 262);
+  --primary-foreground: oklch(14.5% 0.004 247);
+
+  --secondary: oklch(26% 0.006 247);
+  --secondary-foreground: oklch(95% 0.002 247);
+
+  --accent: oklch(70% 0.12 200);
+  --accent-foreground: oklch(14.5% 0.004 247);
+
+  --success: oklch(70% 0.16 145);
+  --success-foreground: oklch(14.5% 0.004 247);
+
+  --warning: oklch(80% 0.15 80);
+  --warning-foreground: oklch(18% 0.02 80);
+
+  --error: oklch(70% 0.19 25);
+  --error-foreground: oklch(14.5% 0.004 247);
+
+  --info: oklch(72% 0.14 240);
+  --info-foreground: oklch(14.5% 0.004 247);
+
+  --shadow-elevation-xs: 0 1px 2px 0 oklch(0% 0 0 / 0.3);
+  --shadow-elevation-sm: 0 1px 3px 0 oklch(0% 0 0 / 0.4), 0 1px 2px -1px oklch(0% 0 0 / 0.4);
+  --shadow-elevation-md: 0 4px 6px -1px oklch(0% 0 0 / 0.4), 0 2px 4px -2px oklch(0% 0 0 / 0.4);
+  --shadow-elevation-lg: 0 10px 15px -3px oklch(0% 0 0 / 0.45), 0 4px 6px -4px oklch(0% 0 0 / 0.45);
+}
+
+/* ---------------------------------------------------------------------- */
+/* Radius — single base variable drives the whole scale (change one       */
+/* value, every radius step follows).                                     */
+/* ---------------------------------------------------------------------- */
+:root {
+  --radius-base: 0.625rem; /* 10px */
+}
+
+/* ---------------------------------------------------------------------- */
+/* Map semantic tokens into Tailwind's theme so `bg-background`,          */
+/* `text-foreground`, `border-border`, `rounded-lg`, `shadow-md`, etc.    */
+/* are generated as real utilities backed by the CSS variables above.     */
+/* `@theme inline` (vs. plain `@theme`) means these resolve at usage time */
+/* against whatever `:root`/`.dark` currently has in scope, which is how  */
+/* one class toggle re-themes every utility with no per-component logic.  */
+/* ---------------------------------------------------------------------- */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-error: var(--error);
+  --color-error-foreground: var(--error-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+
+  --radius-sm: calc(var(--radius-base) - 4px);
+  --radius-md: calc(var(--radius-base) - 2px);
+  --radius-lg: var(--radius-base);
+  --radius-xl: calc(var(--radius-base) + 4px);
+  /* radius-full intentionally omitted — Tailwind's built-in `rounded-full`
+     (9999px) already covers the pill/circle case; no token needed. */
+
+  --shadow-xs: var(--shadow-elevation-xs);
+  --shadow-sm: var(--shadow-elevation-sm);
+  --shadow-md: var(--shadow-elevation-md);
+  --shadow-lg: var(--shadow-elevation-lg);
+
+  /* Typography — semantic sizes with paired line-heights. Font weight
+     (font-medium/semibold/bold), line-height (leading-*) and letter
+     spacing (tracking-*) intentionally reuse Tailwind's own default scale
+     rather than duplicating it — see docs/design-system/tokens.md. */
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', Consolas, monospace;
+
+  --text-display-lg: 3rem;
+  --text-display-lg--line-height: 1.1;
+  --text-display-lg--letter-spacing: -0.02em;
+  --text-display-md: 2.25rem;
+  --text-display-md--line-height: 1.15;
+  --text-display-md--letter-spacing: -0.02em;
+  --text-display-sm: 1.875rem;
+  --text-display-sm--line-height: 1.2;
+  --text-display-sm--letter-spacing: -0.01em;
+
+  --text-heading-xl: 1.5rem;
+  --text-heading-xl--line-height: 1.3;
+  --text-heading-lg: 1.25rem;
+  --text-heading-lg--line-height: 1.35;
+  --text-heading-md: 1.125rem;
+  --text-heading-md--line-height: 1.4;
+  --text-heading-sm: 1rem;
+  --text-heading-sm--line-height: 1.4;
+
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.6;
+  --text-body-md: 1rem;
+  --text-body-md--line-height: 1.6;
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.55;
+
+  --text-caption: 0.75rem;
+  --text-caption--line-height: 1.4;
+  --text-label: 0.8125rem;
+  --text-label--line-height: 1.3;
+}
+
+/* ---------------------------------------------------------------------- */
+/* Z-index — Tailwind has no theme namespace for z-index (it's a static   */
+/* utility, not theme-configurable), so a controlled scale needs explicit */
+/* utility classes rather than @theme tokens. Verified by build output.   */
+/* ---------------------------------------------------------------------- */
+@layer utilities {
+  .z-base {
+    z-index: 0;
+  }
+  .z-dropdown {
+    z-index: 1000;
+  }
+  .z-sticky {
+    z-index: 1020;
+  }
+  .z-overlay {
+    z-index: 1030;
+  }
+  .z-modal {
+    z-index: 1040;
+  }
+  .z-toast {
+    z-index: 1050;
+  }
+  .z-tooltip {
+    z-index: 1060;
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Motion — duration/easing tokens are documented in                      */
+/* docs/design-system/tokens.md and used via Tailwind's built-in numeric  */
+/* `duration-*` utilities and `--ease-*`-backed `ease-*` utilities        */
+/* (`ease-in-out` = our "standard" curve) rather than reinvented here.    */
+/*                                                                        */
+/* This block is the actual accessibility enforcement: it overrides any   */
+/* animation/transition duration to near-zero when the user has          */
+/* requested reduced motion, as a global safety net beneath the           */
+/* component-level `motion-reduce:`/`motion-safe:` variants.              */
+/* ---------------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Base element defaults                                                  */
+/* ---------------------------------------------------------------------- */
+body {
+  margin: 0;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* Visible focus is non-negotiable — every interactive element gets a
+   consistent, high-contrast ring (verified >= 4.5:1 against both
+   background and surface in both themes). Components should generally
+   rely on this rather than inventing per-component focus styles. */
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
