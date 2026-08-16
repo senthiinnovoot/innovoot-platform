@@ -3,9 +3,10 @@
 A thin, curated wrapper around `lucide-react` so components import an `Icon` from one place,
 not the icon library directly.
 
-**Status:** Phase 3A — `Icon` component with a curated `IconName` union (`chevron-down`, `sun`,
-`moon`, `user`). Add an icon by importing it and adding one entry to the map in `Icon.tsx` — do
-not import the whole `lucide-react` package or import icons directly elsewhere.
+**Status:** Phase 3A + 3B — `Icon` component with a curated `IconName` union (`chevron-down`,
+`circle-alert`, `circle-check`, `info`, `loader-circle`, `moon`, `sun`, `triangle-alert`, `user`,
+`x`). Add an icon by importing it and adding one entry to the map in `Icon.tsx` — do not import
+the whole `lucide-react` package or import icons directly elsewhere.
 
 ## Rule
 

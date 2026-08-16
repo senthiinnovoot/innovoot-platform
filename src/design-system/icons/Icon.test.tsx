@@ -30,4 +30,16 @@ describe('Icon', () => {
     const { container } = render(<Icon name="chevron-down" />)
     expect(container.querySelector('svg')).toHaveClass('size-5')
   })
+
+  it.each([
+    'info',
+    'circle-check',
+    'triangle-alert',
+    'circle-alert',
+    'loader-circle',
+    'x',
+  ] as const)('renders the %s icon added for Phase 3B', (name) => {
+    const { container } = render(<Icon name={name} />)
+    expect(container.querySelector('svg')).toBeInTheDocument()
+  })
 })

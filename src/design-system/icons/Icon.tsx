@@ -1,6 +1,17 @@
 import { type VariantProps, cva } from 'class-variance-authority'
 import { type ClassValue, clsx } from 'clsx'
-import { ChevronDown, Moon, Sun, User } from 'lucide-react'
+import {
+  ChevronDown,
+  CircleAlert,
+  CircleCheck,
+  Info,
+  LoaderCircle,
+  Moon,
+  Sun,
+  TriangleAlert,
+  User,
+  X,
+} from 'lucide-react'
 import type { SVGProps } from 'react'
 import { twMerge } from 'tailwind-merge'
 
@@ -22,9 +33,15 @@ function cx(...inputs: ClassValue[]): string {
  */
 const icons = {
   'chevron-down': ChevronDown,
-  sun: Sun,
+  'circle-alert': CircleAlert,
+  'circle-check': CircleCheck,
+  info: Info,
+  'loader-circle': LoaderCircle,
   moon: Moon,
+  sun: Sun,
+  'triangle-alert': TriangleAlert,
   user: User,
+  x: X,
 } as const
 
 export type IconName = keyof typeof icons
