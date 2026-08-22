@@ -6,10 +6,14 @@ import { useBusinessContext } from '@modules/business-context'
 import { cn } from '@shared/utils/cn'
 
 /**
- * Generated entirely from `useBusinessContext()`'s enabled-module list —
- * never a hardcoded per-business-type menu. Dashboard is the one item
- * that's always present (every business type gets one); every other item
- * comes directly from `businessType.modules`.
+ * Nav items come from two sources: a fixed set of always-on items
+ * (Dashboard, Forms, Leads) that every business type gets regardless of
+ * its enabled-module list, and `businessType.modules` for vertical-specific
+ * items (Patients, Appointments, ...). Forms and Leads are Common Platform
+ * Capabilities per `INFORMATION_ARCHITECTURE.md` §5/§8 — not vertical
+ * modules — so they are never gated by `RequireModule` or added to
+ * `businessType.modules`; see docs/decisions for the rationale once
+ * written up.
  */
 export function Sidebar() {
   const { businessId, branchId } = useParams<{ businessId: string; branchId: string }>()
@@ -32,6 +36,18 @@ export function Sidebar() {
         <Icon name="layout-dashboard" />
         <Text as="span" variant="body-sm">
           Dashboard
+        </Text>
+      </NavLink>
+      <NavLink to={`${basePath}/forms`} className={linkClassName}>
+        <Icon name="file-text" />
+        <Text as="span" variant="body-sm">
+          Forms
+        </Text>
+      </NavLink>
+      <NavLink to={`${basePath}/leads`} className={linkClassName}>
+        <Icon name="user" />
+        <Text as="span" variant="body-sm">
+          Leads
         </Text>
       </NavLink>
       {data?.businessType.modules.map((module) => (

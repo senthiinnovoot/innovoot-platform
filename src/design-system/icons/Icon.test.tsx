@@ -50,4 +50,9 @@ describe('Icon', () => {
       expect(container.querySelector('svg')).toBeInTheDocument()
     },
   )
+
+  it('renders the file-text icon added for Forms/Leads Admin navigation', () => {
+    const { container } = render(<Icon name="file-text" />)
+    expect(container.querySelector('svg')).toBeInTheDocument()
+  })
 })

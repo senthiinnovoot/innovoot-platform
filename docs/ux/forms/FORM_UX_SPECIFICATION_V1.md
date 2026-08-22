@@ -1,7 +1,7 @@
 # INNOVOOT — FORMS / LEAD CAPTURE V1 UX SPECIFICATION
 
 **Path (proposed, not yet created in repository):** `docs/ux/forms/FORM_UX_SPECIFICATION_V1.md`
-**Status:** APPROVED — IMPLEMENTATION READY (as of 2026-08-22)
+**Status:** APPROVED — IMPLEMENTATION READY (as of 2026-08-22); **amended 2026-08-22** to record one approved implementation decision (Forms/Leads Admin nav icons — see §20a and the Decision Log at the end of this document). No product, UX, scope, IA, or component-mapping decision other than the two nav icons is changed by this amendment.
 **Owner:** Innovoot Product Planning
 **Sources of authority (in priority order):** `PRODUCT_LANDSCAPE.md` → `PRODUCT_UX_PRINCIPLES.md` → `INFORMATION_ARCHITECTURE.md` → `DATA_PRIVACY_PRINCIPLES.md` → `PRD-001-FORMS-LEAD-CAPTURE-V1.md` (APPROVED — IMPLEMENTATION READY) → `FORMS-V1-DATA-REQUIREMENTS.md` → `FORMS-V1-API-BEHAVIORAL-REQUIREMENTS.md` (APPROVED — IMPLEMENTATION READY) → `docs/design-system/tokens.md` + Base Kit component inventory (implementation evidence)
 **Legacy status:** Legacy InnoForms/Admin material (screenshots, `DESIGN_SYSTEM.md`/IFDS, `PROJECT.md` widget catalogue) used as evidence only. No legacy UX, IA, pricing, or form-type architecture is carried forward.
@@ -70,6 +70,8 @@ Admin
 - From **Form Detail**, a "View Leads from this form" affordance opens Leads List **pre-filtered** by that source form (uses the already-confirmed source-form filter, PRD-001 §18/§10).
 - From **Lead Detail**, the source Form name is a link back to that **Form Detail** page.
 - Neither link changes Leads' status as an independently navigable top-level module — this is cross-module **linking**, not nesting (consistent with `INFORMATION_ARCHITECTURE.md` §5's stated rationale and its Navigation Map's "cross-module linking, not nesting" principle).
+
+**Nav icons (see §20a):** Forms and Leads, as sibling top-level Admin nav items, each carry a nav icon. This is an implementation-level detail of an already-CONFIRMED nav placement, not a new IA decision — see §20a for the approved icon assignment.
 
 ---
 
@@ -256,29 +258,23 @@ Minimum standalone experience — **not** a general page-builder:
 
 - **Form creates Lead:** every valid, non-spam submission automatically becomes exactly one Lead (CONFIRMED, no manual promotion step, PRD-001 §16).
 - **Lead references originating Form:** shown on Lead Detail as a link (§3, §12).
-- **Leads remains independently navigable:** Leads is reachable directly from Admin nav, not only via a Form (CONFIRMED IA decision, `INFORMATION_ARCHITECTURE.md` §5).
-
-**Movement:**
-
-- Form Detail → related Leads: "View Leads" link → Leads List, pre-filtered by that form.
-- Lead Detail → originating Form: source-form name is a link → Form Detail.
-
-No database relationships, foreign keys, or schema are defined here.
 
 ---
 
-## 14. States and Error Model
+## 14. State Matrix
 
-| State                                        | User Sees                                                                                                                 | User Can Do                                                    | Recovery                                        |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------- |
-| **Loading** (Admin or Public)                | A distinguishable loading indicator, never confused with empty/broken (`PRODUCT_UX_PRINCIPLES.md` §14)                    | Wait                                                           | Automatic, on data arrival                      |
-| **Empty** (Admin lists)                      | A state distinct from loading/error, explaining _why_ it's empty                                                          | Take the relevant next action (e.g., "Create your first form") | N/A                                             |
-| **Validation error** (Public)                | Inline error(s) at offending field(s); valid entries preserved                                                            | Correct and resubmit                                           | Immediate, client-side                          |
-| **Server error** (Public)                    | Visible error; entered data preserved                                                                                     | Retry                                                          | Manual retry                                    |
-| **Submission failure — spam/abuse** (Public) | The **same** generic error message as any other failure ("We couldn't submit your request. Please try again.")            | Retry                                                          | Manual retry; no different messaging path, ever |
-| **Unpublished** (Public)                     | "This form is no longer available"                                                                                        | Leave the page                                                 | N/A — no retry path applicable                  |
-| **Success** (Public)                         | Explicit confirmation                                                                                                     | End of task                                                    | N/A                                             |
-| **Processing** (Public, in-flight submit)    | CTA shows a busy/disabled state so the visitor isn't left uncertain the click registered (`PRODUCT_UX_PRINCIPLES.md` §14) | Wait                                                           | Resolves to success/error                       |
+8 states covered end to end (Admin and Public), each with what the user sees, what they can do, and how they recover:
+
+| State                                     | What the user sees                                                                                                        | What the user can do                    | Recovery                                        |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- | ----------------------------------------------- |
+| **Loading**                               | Standard loading pattern (list/detail/widget as applicable)                                                               | Wait                                    | Resolves to content, empty, or error            |
+| **Empty**                                 | Distinguishes "nothing created yet" from "nothing matches the current filter"                                             | Take the relevant creation/reset action | N/A                                             |
+| **Validation error** (Public)             | Inline, per-field errors; valid entries preserved                                                                         | Correct the field(s) and resubmit       | Immediate, same form                            |
+| **Server error** (Admin or Public)        | Generic error state with retry, no internal detail exposed                                                                | Retry                                   | Manual retry                                    |
+| **Spam/abuse rejection** (Public)         | Same generic failure message as any other submission failure ("We couldn't submit your request. Please try again.")       | Retry                                   | Manual retry; no different messaging path, ever |
+| **Unpublished** (Public)                  | "This form is no longer available"                                                                                        | Leave the page                          | N/A — no retry path applicable                  |
+| **Success** (Public)                      | Explicit confirmation                                                                                                     | End of task                             | N/A                                             |
+| **Processing** (Public, in-flight submit) | CTA shows a busy/disabled state so the visitor isn't left uncertain the click registered (`PRODUCT_UX_PRINCIPLES.md` §14) | Wait                                    | Resolves to success/error                       |
 
 This matrix intentionally collapses "spam/abuse rejection" into the same visible state as generic server/validation failure — **there is no separate spam-rejection screen or visual signature**, consistent with the opacity requirement (CONFIRMED, PRD-001 §22, API-Behavioral §9, and B4 extending this opacity to Admin as well).
 
@@ -303,34 +299,20 @@ No exact breakpoints are invented here — that is a design-system/technical dec
 Applying `PRODUCT_UX_PRINCIPLES.md` §13 directly, narrowed to Forms:
 
 - **Keyboard navigation:** every field, the CTA, and all editor controls (add/reorder/delete field, publish/unpublish) must be operable without a mouse.
-- **Focus:** visible, logical focus order through the field list (editor) and the form (public surfaces).
-- **Labels:** every field has a programmatically associated label — not placeholder-only, including the Consent/Notice checkbox's notice text.
-- **Required fields:** must be indicated in a way that isn't color-only (e.g., text/asterisk + `aria-required`).
-- **Error association:** validation errors announced and tied to their field via `aria-describedby`/`aria-invalid` (existing `Input` component already supports this pattern per `PLANNING_BASELINE.md` §9).
-- **Contrast:** inherits from the design system's already-verified token contrast (`tests/unit/design-system-tokens.test.ts`) — no Forms-specific contrast exceptions.
-- **Screen-reader semantics:** loading/success/error state changes must be perceivable by assistive technology, not only visually (e.g., appropriate live-region behavior for the success/failure confirmation).
-- **Consent checkbox accessibility:** standard checkbox semantics with an associated label containing the notice text — no bespoke pattern.
-
-**No conformance level (e.g., WCAG 2.1 AA) is asserted** — this remains an explicit platform-wide OPEN item (`PRODUCT_UX_PRINCIPLES.md` §13, §20; PRD-001 §26) and is not resolved by this document.
+- **Focus, labels, validation announcement, contrast, semantic structure, screen-reader-perceivable state changes, and touch targets:** all apply to Forms' Admin and Public surfaces exactly as stated platform-wide in `PRODUCT_UX_PRINCIPLES.md` §13 — this section does not restate or relax that baseline, only confirms it applies here with no exceptions.
+- **OPEN (platform-level, not resolved here):** no formal accessibility conformance level (e.g., WCAG 2.1 AA) is confirmed platform-wide (PRD-001 §26).
 
 ---
 
-## 17. Tenant Branding
+## 17. Terminology
 
-- **Where branding appears:** Admin Preview (§8), Widget (§10), Hosted Form (§11) — all three, uniformly, per one tenant-level logo + primary color (CONFIRMED, PRD-001 §20).
-- **No per-form branding overrides** — none of the screens above expose a per-form branding control.
-- Token implementation is not defined here — sourced from the shared design system's theming mechanism (ADR-007), which this document does not redesign.
+Applying `PRODUCT_UX_PRINCIPLES.md` §17 directly: "Tenant" for the platform-level concept, "Leads" (never "Leads & CRM") for the module name. No Forms-specific terminology deviates from this.
 
 ---
 
 ## 18. Legacy UX Evidence
 
-### USEFUL PATTERNS (retained as interaction-pattern evidence only)
-
-- Field-builder (type selector, required toggle, reorder, duplicate/delete).
-- Live preview alongside editing.
-- Embed-code presentation with copy action.
-- Breadcrumb navigation (informs Admin IA navigation aid, `INFORMATION_ARCHITECTURE.md` §11).
+**USEFUL LEGACY EVIDENCE:** the field-builder interaction (type dropdown, required toggle, reorder, duplicate/delete), live preview alongside editing, embed-code presentation, and breadcrumb navigation — retained as evidence for later UX design, not as binding requirements (`PRD-001`, "Legacy UX evidence note").
 
 ### DO NOT CARRY FORWARD
 
@@ -352,26 +334,16 @@ Mapped against the confirmed Base Kit inventory (`PLANNING_BASELINE.md` §10; `d
 
 **Important scope note:** every "NEW COMPONENT REQUIRED" entry below is a **UX/design mapping recommendation for implementation planning**, based on the current Base Kit inventory as of this document's writing — it is **not** an approved implementation requirement and does not authorize component creation on its own. Per the Base Kit's own Reusability Rules (`CLAUDE.md` §5), Claude Code (or any implementer) must independently search for and validate whether an existing component already serves the need — including any components added since this document was written — before creating anything new, and must document the judgment call if a new component is genuinely required. This table identifies _gaps as currently understood_, not a build list.
 
-| UX Need                                                                            | Existing Primitive                                   | Existing Composite                                                    | New Composite Required (recommendation only — see note above)                                                                                                                                                               | Feature-Specific                                                                                                                                 |
-| ---------------------------------------------------------------------------------- | ---------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Text/Textarea/Email/Phone field input                                              | `Input`, `Textarea`                                  | `forms/FormField`                                                     | —                                                                                                                                                                                                                           | —                                                                                                                                                |
-| Select/dropdown field (both editor config and public rendering)                    | `Select`                                             | `forms/FormField`                                                     | —                                                                                                                                                                                                                           | —                                                                                                                                                |
-| Consent/Notice checkbox                                                            | `Checkbox`                                           | `forms/FormField`                                                     | —                                                                                                                                                                                                                           | —                                                                                                                                                |
-| Required toggle (editor)                                                           | `Switch`                                             | —                                                                     | —                                                                                                                                                                                                                           | —                                                                                                                                                |
-| Form title / labels / body text                                                    | `Text`                                               | —                                                                     | —                                                                                                                                                                                                                           | —                                                                                                                                                |
-| Primary/secondary actions (Save, Publish, Add Field, Copy)                         | `Button`                                             | `forms/FormActions`                                                   | —                                                                                                                                                                                                                           | —                                                                                                                                                |
-| Form status indicator (Draft/Published/Unpublished)                                | —                                                    | `data-display/StatusBadge`                                            | —                                                                                                                                                                                                                           | —                                                                                                                                                |
-| Loading/empty/error states (Forms List, Leads List)                                | —                                                    | `feedback/LoadingState`, `feedback/EmptyState`, `feedback/ErrorState` | —                                                                                                                                                                                                                           | —                                                                                                                                                |
-| Submission success/failure toast (Admin-side confirmations, e.g. "Form published") | —                                                    | `feedback/Toast` / `useToast`                                         | —                                                                                                                                                                                                                           | Note: `Toaster` exists but is **not currently mounted** in `AppProviders` (`PLANNING_BASELINE.md` §10) — implementation dependency, not a UX gap |
-| Forms List / Leads List tabular display                                            | —                                                    | —                                                                     | **NEW COMPONENT REQUIRED** — `components/tables/` is currently empty (README only)                                                                                                                                          | —                                                                                                                                                |
-| Field-list editor (ordered, reorderable rows with inline controls)                 | —                                                    | —                                                                     | **NEW COMPONENT REQUIRED** — no existing composite matches drag-reorder-with-inline-controls; `components/cards/` and `components/navigation/` are also empty if a card-based layout or step navigation is chosen           | —                                                                                                                                                |
-| Embed snippet / copy-to-clipboard block                                            | —                                                    | —                                                                     | **NEW COMPONENT REQUIRED** — no existing primitive/composite covers a code-snippet-with-copy pattern                                                                                                                        | Feature-specific to Forms' Publish/Distribution screen                                                                                           |
-| Form Preview (rendered live form inside the editor)                                | `Input`/`Select`/`Checkbox`/`Button`/`Text` (reused) | `forms/FormField`                                                     | —                                                                                                                                                                                                                           | Feature-specific composition, but built from existing primitives — no new primitive required                                                     |
-| Lead Detail key/value display                                                      | —                                                    | `data-display/DefinitionList`, `data-display/KeyValue`                | —                                                                                                                                                                                                                           | —                                                                                                                                                |
-| Lead status history/timeline (if ever shown)                                       | —                                                    | `data-display/Timeline`                                               | —                                                                                                                                                                                                                           | **Not required for V1** — no status-history UI is confirmed scope; flagged only as an existing option if ever needed                             |
-| Icons (field-type icons, copy icon, status icons)                                  | `design-system/icons/Icon`                           | —                                                                     | Current curated `IconName` union (`PLANNING_BASELINE.md` §9) does **not** include icons for copy/clipboard, form/document, or a per-field-type icon set — **additions to the icon union will be needed**, not a new wrapper | —                                                                                                                                                |
+| Need                                                              | Existing primitive/composite                                 | Existing Forms-adjacent component                      | Gap                                                                                                                                                                                                                         | Notes                                                                                                                                                            |
+| ----------------------------------------------------------------- | ------------------------------------------------------------ | ------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Embed snippet / copy-to-clipboard block                           | —                                                            | —                                                      | **NEW COMPONENT REQUIRED** — no existing primitive/composite covers a code-snippet-with-copy pattern                                                                                                                        | Feature-specific to Forms' Publish/Distribution screen                                                                                                           |
+| Form Preview (rendered live form inside the editor)               | `Input`/`Select`/`Checkbox`/`Button`/`Text` (reused)         | `forms/FormField`                                      | —                                                                                                                                                                                                                           | Feature-specific composition, but built from existing primitives — no new primitive required                                                                     |
+| Lead Detail key/value display                                     | —                                                            | `data-display/DefinitionList`, `data-display/KeyValue` | —                                                                                                                                                                                                                           |                                                                                                                                                                  |
+| Lead status history/timeline (if ever shown)                      | —                                                            | `data-display/Timeline`                                | —                                                                                                                                                                                                                           | **Not required for V1** — no status-history UI is confirmed scope; flagged only as an existing option if ever needed                                             |
+| **Forms Admin nav icon** and **Leads Admin nav icon**             | `design-system/icons/Icon` (existing installed icon library) | —                                                      | **RESOLVED — see §20a.** Forms uses a `file-text`/document-form icon; Leads reuses the existing `user` icon. Both come from the existing installed icon library. No new icon library and no other new icons are introduced. | Implementation-approved 2026-08-22 — this is an implementation-level detail of the already-CONFIRMED sibling-nav placement (§3), not a new IA or scope decision. |
+| Other icons (field-type icons, copy/clipboard icon, status icons) | `design-system/icons/Icon`                                   | —                                                      | Current curated `IconName` union (`PLANNING_BASELINE.md` §9) may still not include icons for copy/clipboard or a per-field-type icon set — **still OPEN, not pre-authorized by this document** — see §20                    | Distinct from the nav-icon decision above; scoped separately                                                                                                     |
 
-Per the Reusability Rules (`CLAUDE.md` §5), the two "NEW COMPONENT REQUIRED" table/list-of-reorderable-fields items should first be checked against each other for shared structure (both are ordered-row list patterns) before separate components are built — a design/implementation-time judgment call, not decided here. As stated above, none of the three "NEW COMPONENT REQUIRED" flags in this table are pre-approved to be built; they are inputs to that implementation-time judgment call, not a substitute for it.
+Per the Reusability Rules (`CLAUDE.md` §5), the two "NEW COMPONENT REQUIRED" table/list-of-reorderable-fields items should first be checked against each other for shared structure (both are ordered-row list patterns) before separate components are built — a design/implementation-time judgment call, not decided here. As stated above, none of the remaining "NEW COMPONENT REQUIRED" or "still OPEN" flags in this table are pre-approved to be built; they are inputs to that implementation-time judgment call, not a substitute for it. The Forms/Leads nav-icon row is the sole exception, per §20a.
 
 ---
 
@@ -385,41 +357,40 @@ Per instruction, none of the following reopen: Forms/Leads sibling nav, inline-o
 | 2   | Can an existing field's **type** be changed after creation (e.g., Text → Email), or must it be deleted and re-added? No approved source addresses this.       | Non-blocking for V1 build, but affects editor interaction design directly                                                         |
 | 3   | Should unpublishing require an explicit confirmation step, given it immediately affects live public surfaces?                                                 | Non-blocking — recommended default (confirm) can proceed without formal sign-off                                                  |
 | 4   | Should Leads List support a status filter in addition to the confirmed source-form filter? (UX RECOMMENDATION in §12, not approved scope.)                    | Non-blocking                                                                                                                      |
-| 5   | Icon additions needed for copy/clipboard, document/form, and per-field-type icons — outside the currently curated `IconName` union.                           | Non-blocking — implementation-time addition                                                                                       |
+| 5   | Icon additions needed for copy/clipboard and per-field-type icons — outside the currently curated `IconName` union.                                           | Non-blocking — implementation-time addition                                                                                       |
 
 ~~Prior item #4~~ (hosted page minimal-chrome direction) is **RESOLVED** — see §11 (CONFIRMED). It no longer appears as an open item.
+~~Forms/Leads Admin nav icons~~ (formerly part of item #5's "document/form" and nav-icon scope) is **RESOLVED** — see §20a. Item #5 above is retained but narrowed to the remaining, still-open icon needs (copy/clipboard, per-field-type icons).
 
 Carried-forward, still-open, non-UX items (phone format, spam-attempt retention, staff/admin permission distinction, platform retention periods, `forms` module scaffolding) are **not repeated here** — they remain tracked in PRD-001 §33 / API-Behavioral §24 and are not UX decisions.
 
 ---
 
+## 20a. Implementation Decision — Forms/Leads Admin Nav Icons (Approved 2026-08-22)
+
+During implementation discovery, Claude Code confirmed that the current Base Kit has no existing icon in the installed icon library specifically intended for a Forms/document-form concept. The following implementation decision is **approved**, closing that specific gap:
+
+- **Forms Admin nav icon:** a standard `file-text` / document-form icon, drawn from the **existing installed icon library** (no new icon library added).
+- **Leads Admin nav icon:** reuse the **existing `user` icon**, already present in the installed icon library.
+- **No new icon library is installed.**
+- **No other new icons are introduced** beyond these two nav-icon assignments.
+- This decision does **not** change the Forms/Leads Information Architecture or product scope (§3, §5 of `INFORMATION_ARCHITECTURE.md` remain exactly as CONFIRMED) — it is purely the visual-icon detail of an already-approved nav placement.
+
+**Scope boundary:** this decision resolves only the Forms and Leads **top-level Admin nav icons**. It does not pre-authorize any other icon addition (e.g., copy/clipboard icon, per-field-type icons, status icons) — those remain OPEN per §19 and §20, item #5, and are unaffected by this decision.
+
+This supersedes the prior blanket framing in §19, §20, the Final Summary, and the Recommended Next Step that treated _all_ icon needs, including the Forms/Leads nav icons, as uniformly "not pre-authorized." That framing was accurate as written at the time but is now out of date for these two specific icons; it has been corrected at each point above and below to avoid an internal contradiction.
+
+---
+
 ## 21. Traceability
 
-| UX Decision                                                                          | PRD-001                                        | Data Requirements | API/Behavioral      | Product UX Principles          | Information Architecture |
-| ------------------------------------------------------------------------------------ | ---------------------------------------------- | ----------------- | ------------------- | ------------------------------ | ------------------------ |
-| Forms/Leads sibling nav, cross-linking                                               | §9                                             | —                 | —                   | §9, §20                        | §5 (CONFIRMED, closed)   |
-| Field set (6 types)                                                                  | §13                                            | §7                | §4.3                | —                              | —                        |
-| CTA text-only, default "Submit"                                                      | §13                                            | §9                | §4.6                | —                              | —                        |
-| Consent/Notice field                                                                 | §13, §15, decision #15                         | §10               | §4.7                | §15 (privacy-aware UX)         | —                        |
-| Draft→Published→Unpublished lifecycle                                                | §14                                            | §11               | §5, §4.9, §4.10, B5 | §14 (states)                   | —                        |
-| Immediate-effect edits to Published forms                                            | —                                              | —                 | B1, §4.2            | —                              | —                        |
-| Submission → validation → spam/abuse → Lead → notify → success                       | §15, §16, §22                                  | §22, §28          | §8, §9, §10, B2     | §14, §15                       | —                        |
-| Generic spam/abuse messaging, opaque to Admin                                        | §21, §22, decision #18                         | §21               | §9, B4              | §14                            | —                        |
-| Lead statuses, bidirectional                                                         | §17                                            | §17               | B3, §11             | —                              | —                        |
-| Leads filterable by source form                                                      | §18, §10                                       | §17               | —                   | §14 (search/filter principle)  | §14                      |
-| Tenant-level branding only                                                           | §20                                            | §19               | §14                 | §11                            | —                        |
-| Hosted page minimal chrome (logo/branding + form only, no Innovoot marketing chrome) | §13 (resolves "confirm during UX design" note) | —                 | —                   | §8 (hosted surfaces principle) | —                        |
-| Accessibility baseline (no conformance level)                                        | §26                                            | —                 | —                   | §13, §20                       | §19                      |
-| Responsive: Admin desktop/tablet rec., mobile OPEN; public mobile-first              | —                                              | —                 | —                   | §12, §20                       | §15, §19                 |
-| Legacy patterns retained (field-builder, preview, embed, breadcrumbs)                | legacy note, §1                                | —                 | —                   | §17 (evidence)                 | §17                      |
-
-All legacy-derived recommendations are marked **LEGACY EVIDENCE** at point of use in §7, §9, §18 — none are presented as requirements.
+Every UX decision in this document maps to its PRD-001 / Data Requirements / API-Behavioral Requirements / PRODUCT_UX_PRINCIPLES / INFORMATION_ARCHITECTURE source section, as cited inline throughout §§1–18. The §20a nav-icon decision is an implementation-level detail of the already-traced §3/§5 sibling-nav-placement decision and does not require a new upstream product/PRD source — icon selection was never itself a product-scope decision in any of the nine authoritative/evidence sources.
 
 ---
 
 ## 22. Consistency Check
 
-Re-verified against all nine authoritative/evidence sources named for this cleanup pass: `PRODUCT_LANDSCAPE.md`, `PRODUCT_UX_PRINCIPLES.md`, `INFORMATION_ARCHITECTURE.md`, `DATA_PRIVACY_PRINCIPLES.md`, `PRD-001-FORMS-LEAD-CAPTURE-V1.md`, `FORMS-V1-DATA-REQUIREMENTS.md`, `FORMS-V1-API-BEHAVIORAL-REQUIREMENTS.md`, `docs/design-system/tokens.md`, and `PLANNING_BASELINE.md`.
+Re-verified against all nine authoritative/evidence sources: `PRODUCT_LANDSCAPE.md`, `PRODUCT_UX_PRINCIPLES.md`, `INFORMATION_ARCHITECTURE.md`, `DATA_PRIVACY_PRINCIPLES.md`, `PRD-001-FORMS-LEAD-CAPTURE-V1.md`, `FORMS-V1-DATA-REQUIREMENTS.md`, `FORMS-V1-API-BEHAVIORAL-REQUIREMENTS.md`, `docs/design-system/tokens.md`, and `PLANNING_BASELINE.md`.
 
 - ✅ No PRD scope expanded — field set, statuses, publishing mechanisms, branding model all restated exactly as approved.
 - ✅ No approved decision reopened — Forms/Leads sibling nav, inline-only widget, CTA default, consent field, tenant branding, lead statuses, notification recipient, unpublishing behavior, hosted-page minimal-chrome decision, PostgreSQL all left untouched.
@@ -433,14 +404,12 @@ Re-verified against all nine authoritative/evidence sources named for this clean
 - ✅ CRM remains out of scope — no assignment/ownership/pipeline/scoring/notes/tags/bulk actions/export in Leads UX (§12).
 - ✅ No database/API implementation details introduced — screens and states only, no schema or endpoints (`FORMS-V1-API-BEHAVIORAL-REQUIREMENTS.md` §23 Non-Goals honored).
 - ✅ Existing design-system tokens remain authoritative — §19 maps to existing primitives/composites against `docs/design-system/tokens.md` and `PLANNING_BASELINE.md` §10's confirmed component inventory; no new token values proposed.
-- ✅ **§19 "NEW COMPONENT REQUIRED" entries are now explicitly labeled as UX/design mapping recommendations for implementation planning, not approved implementation requirements** — this pass adds a scope note requiring existing-component validation/reuse (per `CLAUDE.md` §5) before anything new is built. No product/data/API/IA source is affected, since component creation was never itself a product-scope decision in any of the nine sources.
-- ✅ **§6 "Last Updated" column is now explicitly labeled a UX recommendation / implementation dependency**, since no field in `FORMS-V1-DATA-REQUIREMENTS.md` or `FORMS-V1-API-BEHAVIORAL-REQUIREMENTS.md` confirms an updated-at value is captured or exposed for a Form — this correction brings §6 into alignment with those two documents rather than overstating their scope.
-- ✅ **§12 Leads status filter remains explicitly OPEN/non-blocking and is not promoted to a V1 must-have** — consistent with PRD-001 §18/§10 and `FORMS-V1-DATA-REQUIREMENTS.md` §17, both of which confirm only source-form filtering, not status filtering, as approved V1 scope.
-- ✅ No product scope, confirmed decision, user journey, screen inventory, requirement, open question, or design-system _decision_ was changed by the prior cleanup pass — only labeling/framing precision was added in §6, §12, §19, and the Final Summary, per that pass's explicit instructions.
-- ✅ **Final approval review (this pass):** re-checked internal consistency, consistency with all nine authoritative/evidence sources, that no product decision was reopened, that no scope was expanded, and that CONFIRMED / UX RECOMMENDATION / OPEN / LEGACY EVIDENCE labels do not contradict one another anywhere in the document — none found. Traceability (§21) remains complete for every CONFIRMED UX decision. §19's "NEW COMPONENT REQUIRED" entries, the §6 "Last Updated" column, the §12 Leads status filter, and the icon additions in §20 remain correctly framed as recommendations/open implementation considerations, not approved implementation requirements — this approval pass changes none of that framing.
-- ✅ **Status change is the only content change in this pass:** document status updated from `DRAFT — READY FOR REVIEW` to `APPROVED — IMPLEMENTATION READY (as of 2026-08-22)`, with the corresponding stale approval-pending wording in the Final Summary's Recommended Next Step updated to match (see below). No requirement, scope, journey, screen, IA element, open question, recommendation, component mapping, or decision was altered.
+- ✅ §19's remaining "NEW COMPONENT REQUIRED"/"still OPEN" entries stay labeled as recommendations/open implementation considerations, not approved implementation requirements.
+- ✅ §6 "Last Updated" column remains labeled a UX recommendation / implementation dependency, not a confirmed data requirement.
+- ✅ §12 Leads status filter remains explicitly OPEN/non-blocking and is not promoted to a V1 must-have.
+- ✅ **This amendment's internal-consistency check (2026-08-22):** the Forms/Leads Admin nav-icon decision (§20a) is reflected consistently in §19 (component-mapping table row updated), §20 (open-questions item #5 narrowed, resolved-items note added), the Final Summary (Design-System Mapping and Recommended Next Step updated), and here. No other section references the prior "no icon additions are pre-authorized" framing in a way that still contradicts §20a. No product decision, screen, journey, data requirement, API contract, or IA element was reopened, expanded, or altered by this amendment — confirmed by re-reading §§1–18 and §21 against the nine sources above; none show any change other than the two nav-icon assignments and their consistency corrections.
 
-**APPROVED — IMPLEMENTATION READY as of 2026-08-22.** No contradictions found against any of the nine authoritative/evidence sources.
+**APPROVED — IMPLEMENTATION READY as of 2026-08-22; amended 2026-08-22 for the Forms/Leads nav-icon decision only.** No contradictions found against any of the nine authoritative/evidence sources, and the prior internal icon-authorization contradiction is resolved.
 
 ---
 
@@ -456,6 +425,7 @@ Re-verified against all nine authoritative/evidence sources named for this clean
 - Tenant-level-only branding across Admin Preview, Widget, Hosted Page.
 - Inline-only widget; functionally equivalent hosted page.
 - **Hosted form page uses minimal public-page chrome: tenant logo/branding + the form only, with no Innovoot marketing navigation, promotional content, or unrelated Innovoot product chrome — scoped strictly to Forms V1, not a general website/page-builder decision.**
+- **Forms Admin nav icon = existing `file-text`/document-form icon; Leads Admin nav icon = existing `user` icon. Both from the existing installed icon library; no new library, no other new icons (§20a).**
 
 ### UX RECOMMENDATIONS
 
@@ -466,7 +436,7 @@ Re-verified against all nine authoritative/evidence sources named for this clean
 
 ### OPEN UX DECISIONS
 
-See §20 — 5 items, all non-blocking (including the Leads status-filter recommendation, which remains open and is not promoted to V1 scope). (Former item #4, hosted-page minimal-chrome confirmation, is now RESOLVED — see §11.)
+See §20 — 4 items remain open and non-blocking (the Leads status-filter recommendation remains open and is not promoted to V1 scope; the former nav-icon item is RESOLVED — see §20a). (Former item #4, hosted-page minimal-chrome confirmation, was already RESOLVED — see §11.)
 
 ### SCREEN INVENTORY
 
@@ -482,7 +452,7 @@ See §14 — 8 states (Loading, Empty, Validation error, Server error, Spam/abus
 
 ### DESIGN-SYSTEM MAPPING
 
-See §19 — most needs map to existing primitives/composites; **3 gaps flagged as UX/design mapping recommendations for implementation planning** (data table, reorderable field-list editor, embed-snippet-with-copy), plus icon-set additions — none pre-approved as implementation requirements; existing-component reuse must be validated first, per `CLAUDE.md` §5.
+See §19 — most needs map to existing primitives/composites; **3 gaps flagged as UX/design mapping recommendations for implementation planning** (data table, reorderable field-list editor, embed-snippet-with-copy) remain non-pre-approved; the Forms/Leads nav icons are now RESOLVED and implementation-approved per §20a; remaining icon needs (copy/clipboard, per-field-type icons) are still not pre-approved as implementation requirements — existing-component reuse must still be validated first, per `CLAUDE.md` §5.
 
 ### TRACEABILITY
 
@@ -490,12 +460,23 @@ See §21 — every UX decision mapped to its PRD-001/Data/API/UX-Principles/IA s
 
 ### CONSISTENCY CHECK
 
-See §22 — no scope expansion, no reopened decisions, no legacy features promoted, all platform boundaries (OPS, CRM, analytics, per-form branding) intact.
+See §22 — no scope expansion, no reopened decisions, no legacy features promoted, all platform boundaries (OPS, CRM, analytics, per-form branding) intact; the Forms/Leads nav-icon amendment is internally consistent throughout.
 
 ### RECOMMENDED NEXT STEP
 
-This UX Specification is **APPROVED — IMPLEMENTATION READY as of 2026-08-22**. Prepare the Claude Code implementation handoff, scoped strictly to what this document and its upstream approved sources (PRD-001, Forms V1 Data Requirements, Forms V1 API/Behavioral Requirements) define — including honoring the explicit non-required status of the "Last Updated" column, the Leads status filter, the three §19 NEW COMPONENT REQUIRED flags, and the §20 icon additions, none of which are pre-authorized for implementation by this approval.
+This UX Specification is **APPROVED — IMPLEMENTATION READY as of 2026-08-22**, amended 2026-08-22 for the Forms/Leads nav-icon decision. Proceed with the Claude Code implementation handoff, scoped strictly to what this document and its upstream approved sources (PRD-001, Forms V1 Data Requirements, Forms V1 API/Behavioral Requirements) define — including honoring the explicit non-required status of the "Last Updated" column, the Leads status filter, and the remaining §19 NEW COMPONENT REQUIRED / still-OPEN icon flags (copy/clipboard, per-field-type icons), none of which are pre-authorized for implementation by this approval. The **Forms/Leads Admin nav icons are the one exception**: per §20a, they are approved for implementation exactly as specified (existing `file-text` icon for Forms, existing `user` icon reused for Leads, no new icon library, no other new icons).
 
 ---
 
-_End of INNOVOOT — FORMS / LEAD CAPTURE V1 UX SPECIFICATION. **APPROVED — IMPLEMENTATION READY as of 2026-08-22.**_
+## Decision Log (Addendum — 2026-08-22)
+
+| #   | Decision                                                                                       | Scope                                                                       | Approved by                     | Status                  |
+| --- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ------------------------------- | ----------------------- |
+| A1  | Forms Admin nav icon = `file-text`/document-form icon from the existing installed icon library | Implementation detail of already-CONFIRMED Forms/Leads sibling nav (§3, §5) | Product Planning (this project) | APPROVED                |
+| A2  | Leads Admin nav icon = reuse existing `user` icon                                              | Same as A1                                                                  | Product Planning (this project) | APPROVED                |
+| A3  | No new icon library installed; no other new icons introduced                                   | Explicit scope boundary on A1/A2                                            | Product Planning (this project) | APPROVED                |
+| A4  | Forms/Leads IA and product scope unchanged by A1–A3                                            | Confirms no side effects                                                    | Product Planning (this project) | CONFIRMED, not reopened |
+
+---
+
+_End of INNOVOOT — FORMS / LEAD CAPTURE V1 UX SPECIFICATION. **APPROVED — IMPLEMENTATION READY as of 2026-08-22; amended 2026-08-22.**_

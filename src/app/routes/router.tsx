@@ -28,6 +28,11 @@ const rootChildren: RouteObject[] = [{ index: true, element: <FoundationStatusPa
 // guarding, not the modules themselves.
 const businessRoutes: RouteObject[] = [
   { path: 'dashboard', element: <DashboardPage /> },
+  // Forms and Leads are Common Platform Capabilities (INFORMATION_ARCHITECTURE.md
+  // §5/§8), not vertical-specific modules — always-on like `dashboard`, no
+  // RequireModule guard and no businessType.modules dependency.
+  { path: 'forms', element: <ModulePlaceholderPage moduleName="Forms" /> },
+  { path: 'leads', element: <ModulePlaceholderPage moduleName="Leads" /> },
   {
     path: 'patients',
     element: (
