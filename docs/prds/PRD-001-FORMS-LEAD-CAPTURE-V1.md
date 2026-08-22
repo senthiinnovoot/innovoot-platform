@@ -428,7 +428,7 @@ Only items #5, #6, and #8 remain open. None of them block PRD approval or implem
 | Privacy/data boundary consistency-checked                                 | Done — see §36                                    |
 | Acceptance criteria drafted                                               | Done                                              |
 | Open decisions resolved                                                   | **3 non-blocking items remain** (§33: #5, #6, #8) |
-| PRD status                                                                | **DRAFT — READY FOR APPROVAL**                    |
+| PRD status                                                                | **APPROVED — IMPLEMENTATION READY**               |
 
 **This PRD is now materially complete.** All product/UX-affecting open decisions are resolved. The 3 remaining open items (#5, #6, #8) are non-blocking technical/future-planning notes and do not prevent this PRD from being marked APPROVED / IMPLEMENTATION READY.
 
