@@ -1,6 +1,6 @@
 # PRD-001 — Forms / Lead Capture V1
 
-**Status:** DRAFT — READY FOR APPROVAL (all product/UX-affecting decisions resolved; 3 non-blocking technical/future-planning items remain open — see §33)
+**Status:** APPROVED — IMPLEMENTATION READY
 **Type:** Product Requirements Document (product specification, not technical design)
 **Owner:** Innovoot Product Planning
 **Sources of authority:** PRODUCT_LANDSCAPE.md · PRODUCT_DEVELOPMENT_STRATEGY.md · DATA_PRIVACY_PRINCIPLES.md · PLANNING_BASELINE.md · Forms/Lead Capture discovery (this project, prior session)
@@ -459,4 +459,4 @@ Only items #5, #6, and #8 remain open. None of them block PRD approval or implem
 
 ---
 
-_End of PRD-001 (updated after final decisions round). All product/UX-affecting decisions are resolved. Awaiting your explicit approval to move this PRD's status to APPROVED / IMPLEMENTATION READY. Items #5, #6, and #8 in §33 remain open but non-blocking._
+_End of PRD-001. APPROVED — IMPLEMENTATION READY as of 2026-08-22. All product/UX-affecting decisions are resolved and ratified. Items #5, #6, and #8 in §33 remain open but non-blocking and do not gate implementation._
